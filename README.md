@@ -102,7 +102,7 @@ git push -u origin main
 ```
 3. Allez dans **Settings → Pages**
 4. Sélectionnez **Source: main branch** et **/ (root)**
-5. Votre site sera disponible à : `https://votre-pseudo.github.io/coopagri/`
+5. Votre site sera disponible à : `https://eezoua19.github.io/CoopAgri.github.io/`
 
 ## 📊 Chart.js - Visualisation des Données
 
@@ -127,7 +127,7 @@ git push -u origin main
 - **Desktop** : ✅ Chrome, Firefox, Safari, Edge (dernières versions)
 - **Mobile** : ✅ Tous les smartphones (responsive design)
 - **Tablette** : ✅ Interface adaptée
-- **Navigateurs** : ✅ Support ES6+ et CSS Grid/Flexbox
+- **Navigateurs** : ✅ CSS Grid/Flexbox
 
 ## 🎨 Design et Expérience Utilisateur
 
