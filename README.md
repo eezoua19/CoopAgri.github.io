@@ -10,7 +10,7 @@
 
 ## 🎯 Démo en ligne
 
-🌐 **Accédez à l'application :** [https://votre-pseudo.github.io/coopagri/](https://votre-pseudo.github.io/coopagri/)
+🌐 **Accédez à l'application :** [[https://votre-pseudo.github.io/coopagri/](https://votre-pseudo.github.io/coopagri/)](https://eezoua19.github.io/CoopAgri.github.io/)
 
 ## ✨ Fonctionnalités Principales
 
