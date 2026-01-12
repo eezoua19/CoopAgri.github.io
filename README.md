@@ -280,9 +280,9 @@ copies or substantial portions of the Software.
 
 **CoopAgri Pro** - Système développé pour les coopératives agricoles
 
-- **GitHub** : [@votre-pseudo](https://github.com/votre-pseudo)
-- **Site web** : [https://votre-pseudo.github.io/coopagri](https://votre-pseudo.github.io/coopagri)
-- **Contact** : email@example.com
+- **GitHub** : [@eezoua19](https://github.com/eezoua19)
+- **Site web** : [https://eezoua19.github.io/coopagri](https://eezoua19.github.io/coopagri)
+- **Contact** : ezouaemmanuel07@gmail.com
 
 ## 🙏 Remerciements
 
@@ -317,8 +317,8 @@ copies or substantial portions of the Software.
 
 Pour toute question, suggestion ou problème :
 
-1. **Issues GitHub** : [Créer une issue](https://github.com/votre-pseudo/coopagri/issues)
-2. **Email** : support@coopagri.pro
+1. **Issues GitHub** : [Créer une issue](https://github.com/eezoua19/coopagri/issues)
+2. **Email** : eezoua@coopagri.pro
 3. **Documentation** : Consultez ce README et les commentaires du code
 
 ---
