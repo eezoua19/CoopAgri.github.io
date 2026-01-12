@@ -63,7 +63,7 @@ coopagri/
 ├── style.css          # Styles CSS complets (40+ composants)
 ├── script.js          # Logique JavaScript (1000+ lignes)
 ├── README.md          # Documentation complète
-└── favicon.ico        # Icône du site (optionnel)
+└──
 ```
 
 ## 🛠 Installation et Déploiement
