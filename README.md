@@ -255,7 +255,7 @@ git push origin feature/nouvelle-fonctionnalite
 | Performance lente | Limitez le nombre d'animations simultanées |
 
 ### Console de Développement
-- **F12** pour ouvrir les outils développeurs
+- **fn+F12** pour ouvrir les outils développeurs
 - **Console** pour voir les erreurs JavaScript
 - **Network** pour vérifier le chargement des ressources
 - **Application** pour voir le LocalStorage
@@ -316,15 +316,6 @@ const member = {
 - [ ] **Export PDF avancé** avec templating
 - [ ] **Dashboard admin** avec analytics
 
-### Version 1.x (Améliorations)
-- [ ] Plus de types de graphiques (heatmaps, etc.)
-- [ ] Thème sombre/clair automatique
-- [ ] Internationalisation (Anglais, Espagnol)
-- [ ] Import/Export CSV des données
-- [ ] Calculatrice de profits intégrée
-- [ ] Planificateur de récoltes
-- [ ] Rapports comparatifs annuels
-
 ## 📞 Support et Contact
 
 Pour toute question, suggestion ou problème :
@@ -341,4 +332,3 @@ Pour toute question, suggestion ou problème :
 ---
 
 *Dernière mise à jour : Janvier 2025*  
-*Version : 1.0.0*  
