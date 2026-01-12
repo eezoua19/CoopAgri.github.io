@@ -58,12 +58,45 @@
 ## 📁 Structure du Projet
 
 ```
-coopagri/
-├── index.html          # Page principale de l'application
-├── style.css          # Styles CSS complets (40+ composants)
-├── script.js          # Logique JavaScript (1000+ lignes)
-├── README.md          # Documentation complète
-└──
+projet/
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/
+│   │   │       └── CoopAgri/
+│   │   │           ├── config/
+│   │   │           │   └── SecurityConfig.java
+|   |   |           │   └── WebConfig.java
+│   │   │           ├── controller/
+│   │   │           │   └── HarvestController.java
+|   |   |           |   └── CooperativeController.java
+│   │   │           ├── dto/
+│   │   │           │   └── MemberRequest.java
+|   |   |                    |   └── HarvesRequest.java
+│   │   │           ├── exception/
+│   │   │           │   └── ResourceNotFoundException.java
+│   │   │           ├── model/
+│   │   │           │   └── FinancialRecord.java
+|   |   |           |   └── Cooperative.java
+|   |   |           |   └── Harvest.java
+|   |   |           |   └── Member.java
+│   │   │           ├── repository/
+│   │   │           │   └── MemberRepository.java
+|   |   |           |   └── CooperativeRepository.java
+│   │   │           └── service/
+│   │   │               └── HarvestService.java
+|   |   |           |   └── CooperativeService.java
+│   │   └── resources/
+│   │       ├── application.properties
+│   │       ├── data.sql
+│   │       └── static/
+│   │           ├── index.html
+│   │           └── javascript.js
+│   └── test/
+│       └── java/
+│           └── com/
+│               └── CoopAgri/
+├── README.md
 ```
 
 ## 🛠 Installation et Déploiement
