@@ -297,7 +297,7 @@ const member = {
 Pour toute question, suggestion ou problème :
 
 1. **Issues GitHub** : (https://github.com/eezoua19/coopagri/issues)
-2. **Email** : eezoua@coopagri.pro
+2. **Email** : ezouaemmanuel07@gmail.com
 3. **Documentation** : Consultez ce README et les commentaires du code
 
 ---
