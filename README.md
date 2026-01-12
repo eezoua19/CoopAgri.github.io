@@ -43,11 +43,3 @@
 | **Chart.js** | Bibliothèque pour les graphiques et visualisations |
 | **Font Awesome** | Icônes et éléments visuels |
 | **GitHub Pages** | Hébergement gratuit et déploiement continu |
-
-## 📁 Structure du Projet
-coopagri/
-├── index.html # Page principale
-├── style.css # Styles CSS complets
-├── script.js # Logique JavaScript
-├── README.md # Documentation
-└── .gitignore # Fichiers à ignorer (optionnel)
