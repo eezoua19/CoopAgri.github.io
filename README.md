@@ -50,3 +50,4 @@ coopagri/
 ├── style.css # Styles CSS complets
 ├── script.js # Logique JavaScript
 ├── README.md # Documentation
+└── .gitignore # Fichiers à ignorer (optionnel)
