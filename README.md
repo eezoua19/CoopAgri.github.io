@@ -10,7 +10,7 @@
 
 ## 🎯 Démo en ligne
 
-🌐 **Accédez à l'application :** [[https://votre-pseudo.github.io/coopagri/](https://votre-pseudo.github.io/coopagri/)](https://eezoua19.github.io/CoopAgri.github.io/)
+🌐 **Accédez à l'application :** [https://eezoua19.github.io/CoopAgri.github.io/]
 
 ## ✨ Fonctionnalités Principales
 
@@ -255,33 +255,12 @@ const member = {
     revenue: 1250000
 };
 ```
-
-## 📄 Licence
-
-Ce projet est sous licence **MIT** - voir le fichier [LICENSE](LICENSE) pour plus de détails.
-
-```
-MIT License
-
-Copyright (c) 2025 CoopAgri Pro
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-```
-
 ## 👨‍🌾 Auteur
 
 **CoopAgri Pro** - Système développé pour les coopératives agricoles
 
-- **GitHub** : [@eezoua19](https://github.com/eezoua19)
-- **Site web** : [https://eezoua19.github.io/coopagri](https://eezoua19.github.io/coopagri)
+- **GitHub** : (https://github.com/eezoua19)
+- **Site web** : [https://eezoua19.github.io/CoopAgri.github.io/]
 - **Contact** : ezouaemmanuel07@gmail.com
 
 ## 🙏 Remerciements
@@ -317,19 +296,9 @@ copies or substantial portions of the Software.
 
 Pour toute question, suggestion ou problème :
 
-1. **Issues GitHub** : [Créer une issue](https://github.com/eezoua19/coopagri/issues)
+1. **Issues GitHub** : (https://github.com/eezoua19/coopagri/issues)
 2. **Email** : eezoua@coopagri.pro
 3. **Documentation** : Consultez ce README et les commentaires du code
-
----
-
-## 🌟 Citations de Témoignages
-
-> "CoopAgri Pro a révolutionné la gestion de notre coopérative de cacao. L'interface est intuitive et les graphiques nous aident à prendre de meilleures décisions."  
-> — **Directeur, Coopérative de Cacao d'Abidjan**
-
-> "Un outil indispensable pour toute coopérative agricole moderne. La mise en place sur GitHub Pages a été très simple."  
-> — **Responsable IT, Union des Coopératives Agricoles**
 
 ---
 
@@ -341,4 +310,3 @@ Pour toute question, suggestion ou problème :
 
 *Dernière mise à jour : Janvier 2025*  
 *Version : 1.0.0*  
-*Statut : Production Ready*
