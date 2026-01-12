@@ -1,0 +1,3118 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoopAgri - Gestion de Coopératives Agricoles</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* ===== VARIABLES ET RÉINITIALISATION ===== */
+        :root {
+            --cacao-color: #8B4513;
+            --cacao-light: #D2691E;
+            --anacarde-color: #FF9800;
+            --anacarde-light: #FFB74D;
+            --palmier-color: #388E3C;
+            --palmier-light: #66BB6A;
+            --primary-color: #2E7D32;
+            --primary-dark: #1B5E20;
+            --primary-light: #4CAF50;
+            --secondary-color: #FF9800;
+            --danger-color: #E53935;
+            --warning-color: #FFB300;
+            --info-color: #2196F3;
+            --light-color: #F8F9FA;
+            --dark-color: #212121;
+            --gray-color: #757575;
+            --border-color: #E0E0E0;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --header-height: 70px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        /* ===== HEADER ET NAVIGATION COMPLÈTE ===== */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .logo:hover {
+            transform: translateY(-2px);
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 50%;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .logo .tagline {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            font-weight: 400;
+            margin-left: 5px;
+        }
+
+        /* Navigation principale */
+        .main-nav {
+            flex: 1;
+            margin-left: 40px;
+        }
+
+        .main-nav ul {
+            display: flex;
+            list-style: none;
+            gap: 5px;
+        }
+
+        .main-nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 12px 20px;
+            border-radius: 8px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-nav a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background-color: white;
+            transition: var(--transition);
+            transform: translateX(-50%);
+        }
+
+        .main-nav a:hover::before {
+            width: 70%;
+        }
+
+        .main-nav a:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .main-nav a.active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .main-nav a.active::before {
+            width: 70%;
+        }
+
+        /* Menu utilisateur */
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            transition: var(--transition);
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.05);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Menu mobile */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        /* ===== SECTIONS DE CONTENU ===== */
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* ===== SECTION TABLEAU DE BORD ===== */
+        .welcome-section {
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.1), rgba(76, 175, 80, 0.1));
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--cacao-color), var(--anacarde-color), var(--palmier-color));
+        }
+
+        .welcome-text h2 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 0.8rem;
+            font-weight: 700;
+        }
+
+        .welcome-text p {
+            color: #555;
+            font-size: 1.1rem;
+            max-width: 600px;
+        }
+
+        .date-display {
+            background-color: white;
+            padding: 1rem 2rem;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            color: var(--primary-color);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Selecteur de coopérative */
+        .cooperative-selector-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            background-color: white;
+            padding: 1.8rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .cooperative-selector-container h3 {
+            color: var(--dark-color);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .cooperative-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .coop-btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1rem;
+            min-width: 200px;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .coop-btn.cacao {
+            background: linear-gradient(135deg, var(--cacao-color), var(--cacao-light));
+            color: white;
+        }
+
+        .coop-btn.anacarde {
+            background: linear-gradient(135deg, var(--anacarde-color), var(--anacarde-light));
+            color: white;
+        }
+
+        .coop-btn.palmier {
+            background: linear-gradient(135deg, var(--palmier-color), var(--palmier-light));
+            color: white;
+        }
+
+        .coop-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .coop-btn.active {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            border: 3px solid white;
+        }
+
+        /* Cartes de statistiques */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 1.8rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+        }
+
+        .stat-card.cacao::before {
+            background-color: var(--cacao-color);
+        }
+
+        .stat-card.anacarde::before {
+            background-color: var(--anacarde-color);
+        }
+
+        .stat-card.palmier::before {
+            background-color: var(--palmier-color);
+        }
+
+        .stat-card.members::before {
+            background-color: var(--primary-color);
+        }
+
+        .stat-card.revenue::before {
+            background-color: #6A1B9A;
+        }
+
+        .stat-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            color: white;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .cacao-bg {
+            background: linear-gradient(135deg, var(--cacao-color), var(--cacao-light));
+        }
+
+        .anacarde-bg {
+            background: linear-gradient(135deg, var(--anacarde-color), var(--anacarde-light));
+        }
+
+        .palmier-bg {
+            background: linear-gradient(135deg, var(--palmier-color), var(--palmier-light));
+        }
+
+        .members-bg {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        }
+
+        .revenue-bg {
+            background: linear-gradient(135deg, #6A1B9A, #9C27B0);
+        }
+
+        .stat-info {
+            flex: 1;
+        }
+
+        .stat-info h3 {
+            font-size: 1rem;
+            color: var(--gray-color);
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--dark-color);
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .stat-change.positive {
+            color: var(--primary-color);
+        }
+
+        .stat-change.negative {
+            color: var(--danger-color);
+        }
+
+        /* Actions rapides */
+        .quick-actions {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-header h3 {
+            color: var(--dark-color);
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        .view-all {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .view-all:hover {
+            color: var(--primary-dark);
+            transform: translateX(5px);
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.8rem 1rem;
+            background-color: white;
+            border-radius: var(--border-radius);
+            border: 2px solid var(--border-color);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            gap: 15px;
+            height: 100%;
+        }
+
+        .action-btn:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .action-btn i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .action-btn span {
+            font-weight: 700;
+            color: var(--dark-color);
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+
+        .action-btn:hover i,
+        .action-btn:hover span {
+            color: white;
+        }
+
+        /* Graphiques */
+        .charts-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 2.5rem;
+        }
+
+        .chart-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .chart-container h3 {
+            color: var(--dark-color);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        .chart {
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        /* Activités récentes */
+        .recent-activity {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            border-left: 5px solid var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .activity-item:hover {
+            background-color: #f0f7f0;
+            transform: translateX(5px);
+        }
+
+        .activity-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.1), rgba(76, 175, 80, 0.1));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-content h4 {
+            color: var(--dark-color);
+            margin-bottom: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .activity-content p {
+            color: var(--gray-color);
+            font-size: 1rem;
+        }
+
+        .activity-time {
+            color: var(--gray-color);
+            font-size: 0.9rem;
+            font-weight: 600;
+            flex-shrink: 0;
+            background-color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* ===== SECTION MEMBRES ===== */
+        .members-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 2rem;
+        }
+
+        .member-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .member-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .member-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .member-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .member-info h4 {
+            color: var(--dark-color);
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .member-info p {
+            color: var(--gray-color);
+            font-size: 0.9rem;
+        }
+
+        .member-coops {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .coop-tag {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .coop-tag.cacao {
+            background-color: rgba(139, 69, 19, 0.1);
+            color: var(--cacao-color);
+        }
+
+        .coop-tag.anacarde {
+            background-color: rgba(255, 152, 0, 0.1);
+            color: var(--anacarde-color);
+        }
+
+        .coop-tag.palmier {
+            background-color: rgba(56, 142, 60, 0.1);
+            color: var(--palmier-color);
+        }
+
+        .member-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .member-stat {
+            text-align: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .member-stat .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .member-stat .label {
+            font-size: 0.8rem;
+            color: var(--gray-color);
+            margin-top: 5px;
+        }
+
+        /* ===== SECTION RÉCOLTES ===== */
+        .harvest-table-container {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-top: 2rem;
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+        }
+
+        .harvest-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .harvest-table th {
+            background-color: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark-color);
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .harvest-table td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .harvest-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .harvest-coop {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .harvest-coop.cacao {
+            background-color: rgba(139, 69, 19, 0.1);
+            color: var(--cacao-color);
+        }
+
+        .harvest-coop.anacarde {
+            background-color: rgba(255, 152, 0, 0.1);
+            color: var(--anacarde-color);
+        }
+
+        .harvest-coop.palmier {
+            background-color: rgba(56, 142, 60, 0.1);
+            color: var(--palmier-color);
+        }
+
+        /* ===== SECTION BÉNÉFICES ===== */
+        .profit-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 2.5rem;
+        }
+
+        .profit-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.8rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .profit-card h3 {
+            color: var(--gray-color);
+            font-size: 1rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .profit-card .amount {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .profit-card .change {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .profit-card .change.positive {
+            color: var(--primary-color);
+        }
+
+        .profit-card .change.negative {
+            color: var(--danger-color);
+        }
+
+        /* ===== SECTION PARAMÈTRES ===== */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 2rem;
+        }
+
+        .settings-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .settings-card h3 {
+            color: var(--dark-color);
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .settings-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .settings-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        /* ===== MODALES ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: var(--border-radius);
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.8rem;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+        }
+
+        .modal-header h3 {
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+        }
+
+        .close-modal {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.8rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            font-size: 1.05rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark), #0d3c0f);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(46, 125, 50, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: #f8f9fa;
+            color: var(--dark-color);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e9ecef;
+            transform: translateY(-3px);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--border-color);
+            background-color: #f8f9fa;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+        }
+
+        .select-cooperative {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 1.8rem;
+        }
+
+        .coop-option {
+            padding: 20px 10px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            background-color: white;
+        }
+
+        .coop-option i {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .coop-option:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(46, 125, 50, 0.05);
+            transform: translateY(-5px);
+        }
+
+        .coop-option.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(46, 125, 50, 0.1);
+            box-shadow: 0 8px 16px rgba(46, 125, 50, 0.1);
+        }
+
+        .coop-option.cacao {
+            color: var(--cacao-color);
+        }
+
+        .coop-option.anacarde {
+            color: var(--anacarde-color);
+        }
+
+        .coop-option.palmier {
+            color: var(--palmier-color);
+        }
+
+        /* ===== NOTIFICATIONS ===== */
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 30px;
+            background-color: white;
+            color: var(--dark-color);
+            padding: 20px 25px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 3000;
+            transform: translateX(400px);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 400px;
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .notification.active {
+            transform: translateX(0);
+        }
+
+        .notification i {
+            font-size: 1.8rem;
+        }
+
+        .notification.success {
+            border-left-color: var(--primary-color);
+        }
+
+        .notification.success i {
+            color: var(--primary-color);
+        }
+
+        .notification.error {
+            border-left-color: var(--danger-color);
+        }
+
+        .notification.error i {
+            color: var(--danger-color);
+        }
+
+        .notification.warning {
+            border-left-color: var(--warning-color);
+        }
+
+        .notification.warning i {
+            color: var(--warning-color);
+        }
+
+        .notification.info {
+            border-left-color: var(--info-color);
+        }
+
+        .notification.info i {
+            color: var(--info-color);
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-content h4 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .notification-content p {
+            font-size: 0.95rem;
+            color: var(--gray-color);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 3rem 0 2rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .footer-description {
+            max-width: 600px;
+            color: #aaa;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .footer-links a {
+            color: #ddd;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            color: #888;
+            font-size: 0.95rem;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(80px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1200px) {
+            .cooperative-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .coop-btn {
+                min-width: 100%;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+
+            .main-nav {
+                display: none;
+                position: fixed;
+                top: var(--header-height);
+                left: 0;
+                width: 100%;
+                background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+                padding: 20px;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            }
+
+            .main-nav.active {
+                display: block;
+            }
+
+            .main-nav ul {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .select-cooperative {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .welcome-section {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .stats-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .action-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stat-card {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+
+            .stat-icon {
+                width: 70px;
+                height: 70px;
+            }
+
+            .activity-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .activity-time {
+                align-self: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .select-cooperative {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+            }
+
+            .modal-footer .btn {
+                width: 100%;
+            }
+
+            .notification {
+                max-width: calc(100% - 40px);
+                right: 20px;
+                left: 20px;
+            }
+
+            .coop-btn {
+                min-width: 100%;
+                padding: 12px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo" onclick="switchSection('dashboard')">
+                    <i class="fas fa-seedling"></i>
+                    <div>
+                        <h1>CoopAgri</h1>
+                        <span class="tagline">Gestion coopérative</span>
+                    </div>
+                </div>
+
+                <nav class="main-nav" id="main-nav">
+                    <ul>
+                        <li><a href="#" onclick="switchSection('dashboard')" class="active">
+                                <i class="fas fa-tachometer-alt"></i> Tableau de bord
+                            </a></li>
+                        <li><a href="#" onclick="switchSection('members')">
+                                <i class="fas fa-users"></i> Membres
+                            </a></li>
+                        <li><a href="#" onclick="switchSection('harvests')">
+                                <i class="fas fa-box"></i> Récoltes
+                            </a></li>
+                        <li><a href="#" onclick="switchSection('profits')">
+                                <i class="fas fa-chart-pie"></i> Bénéfices
+                            </a></li>
+                        <li><a href="#" onclick="switchSection('settings')">
+                                <i class="fas fa-cog"></i> Paramètres
+                            </a></li>
+                    </ul>
+                </nav>
+
+                <button class="mobile-menu-btn" id="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <div class="user-menu">
+                    <div class="user-avatar" id="user-menu-btn">
+                        <span>AD</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- SECTION TABLEAU DE BORD -->
+        <section id="dashboard-section" class="content-section active">
+            <div class="welcome-section">
+                <div class="welcome-text">
+                    <h2>Tableau de bord CoopAgri Pro</h2>
+                    <p>Gérez vos coopératives agricoles, suivez les récoltes, et optimisez vos bénéfices en temps réel
+                    </p>
+                </div>
+                <div class="date-display">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span id="current-date">Chargement...</span>
+                </div>
+            </div>
+
+            <div class="cooperative-selector-container">
+                <h3>Sélectionnez votre coopérative :</h3>
+                <div class="cooperative-selector">
+                    <div class="cooperative-buttons">
+                        <button class="coop-btn cacao active" onclick="selectCooperative('cacao')">
+                            <i class="fas fa-seedling"></i>
+                            Coopérative de Cacao
+                        </button>
+                        <button class="coop-btn anacarde" onclick="selectCooperative('anacarde')">
+                            <i class="fas fa-apple-alt"></i>
+                            Coopérative d'Anacarde
+                        </button>
+                        <button class="coop-btn palmier" onclick="selectCooperative('palmier')">
+                            <i class="fas fa-tree"></i>
+                            Coopérative de Palmier
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-cards">
+                <div class="stat-card cacao">
+                    <div class="stat-icon cacao-bg">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Récolte Cacao (kg)</h3>
+                        <div class="stat-value" id="cacao-harvest">12,450</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+12% ce mois</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card anacarde">
+                    <div class="stat-icon anacarde-bg">
+                        <i class="fas fa-apple-alt"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Récolte Anacarde (kg)</h3>
+                        <div class="stat-value" id="anacarde-harvest">8,720</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+8% ce mois</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card palmier">
+                    <div class="stat-icon palmier-bg">
+                        <i class="fas fa-tree"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Récolte Palmier (L)</h3>
+                        <div class="stat-value" id="palmier-harvest">5,340</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+5% ce mois</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card members">
+                    <div class="stat-icon members-bg">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Membres actifs</h3>
+                        <div class="stat-value" id="members-count">147</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-user-plus"></i>
+                            <span>+3 nouveaux</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card revenue">
+                    <div class="stat-icon revenue-bg">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Bénéfices du mois</h3>
+                        <div class="stat-value" id="revenue-amount">4.25M FCFA</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-chart-line"></i>
+                            <span>+15% vs dernier mois</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quick-actions">
+                <div class="section-header">
+                    <h3>Actions rapides</h3>
+                    <a href="#" class="view-all"
+                        onclick="showNotification('Actions', 'Toutes les actions disponibles', 'info')">
+                        Voir toutes les actions
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="action-buttons">
+                    <div class="action-btn" onclick="openModal('harvest-modal')">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Ajouter récolte</span>
+                    </div>
+                    <div class="action-btn" onclick="openModal('member-modal')">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Ajouter membre</span>
+                    </div>
+                    <div class="action-btn" onclick="openModal('payment-modal')">
+                        <i class="fas fa-hand-holding-usd"></i>
+                        <span>Enregistrer paiement</span>
+                    </div>
+                    <div class="action-btn" onclick="openModal('report-modal')">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Générer rapport</span>
+                    </div>
+                    <div class="action-btn" onclick="openModal('meeting-modal')">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Planifier réunion</span>
+                    </div>
+                    <div class="action-btn" onclick="openModal('profit-modal')">
+                        <i class="fas fa-share-alt"></i>
+                        <span>Distribuer bénéfices</span>
+                    </div>
+                    <div class="action-btn"
+                        onclick="showNotification('Notification', 'Notification envoyée aux membres', 'success')">
+                        <i class="fas fa-bell"></i>
+                        <span>Envoyer notification</span>
+                    </div>
+                    <div class="action-btn"
+                        onclick="showNotification('Analytiques', 'Analyses détaillées disponibles', 'info')">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Analytiques</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-section">
+                <div class="chart-container">
+                    <h3>Performance des récoltes</h3>
+                    <div class="chart">
+                        <canvas id="harvestChart" width="400" height="300"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3>Répartition des bénéfices</h3>
+                    <div class="chart">
+                        <canvas id="profitChart" width="400" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recent-activity">
+                <div class="section-header">
+                    <h3>Activités récentes</h3>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="activity-search" placeholder="Rechercher une activité..."
+                            onkeyup="filterActivities(this.value)">
+                    </div>
+                </div>
+                <div id="activity-list" class="activity-list">
+                    <!-- Les activités seront ajoutées dynamiquement ici -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION MEMBRES -->
+        <section id="members-section" class="content-section">
+            <div class="welcome-section">
+                <div class="welcome-text">
+                    <h2>Gestion des Membres</h2>
+                    <p>Consultez et gérez les membres de vos coopératives agricoles</p>
+                </div>
+                <button class="btn btn-primary" onclick="openModal('member-modal')">
+                    <i class="fas fa-user-plus"></i>
+                    Ajouter un membre
+                </button>
+            </div>
+
+            <div class="members-grid" id="members-grid">
+                <!-- Les membres seront ajoutés dynamiquement ici -->
+            </div>
+        </section>
+
+        <!-- SECTION RÉCOLTES -->
+        <section id="harvests-section" class="content-section">
+            <div class="welcome-section">
+                <div class="welcome-text">
+                    <h2>Gestion des Récoltes</h2>
+                    <p>Suivez et gérez toutes les récoltes de vos coopératives</p>
+                </div>
+                <button class="btn btn-primary" onclick="openModal('harvest-modal')">
+                    <i class="fas fa-plus-circle"></i>
+                    Ajouter une récolte
+                </button>
+            </div>
+
+            <div class="harvest-table-container">
+                <table class="harvest-table" id="harvest-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Coopérative</th>
+                            <th>Produit</th>
+                            <th>Quantité</th>
+                            <th>Membre</th>
+                            <th>Qualité</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Les récoltes seront ajoutées dynamiquement ici -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECTION BÉNÉFICES -->
+        <section id="profits-section" class="content-section">
+            <div class="welcome-section">
+                <div class="welcome-text">
+                    <h2>Analyse des Bénéfices</h2>
+                    <p>Visualisez et analysez les bénéfices de vos coopératives</p>
+                </div>
+                <button class="btn btn-primary" onclick="openModal('profit-modal')">
+                    <i class="fas fa-share-alt"></i>
+                    Distribuer bénéfices
+                </button>
+            </div>
+
+            <div class="profit-summary">
+                <div class="profit-card">
+                    <h3>Bénéfices Totaux</h3>
+                    <div class="amount">12.5M FCFA</div>
+                    <div class="change positive">+15% vs trimestre dernier</div>
+                </div>
+                <div class="profit-card">
+                    <h3>Cacao</h3>
+                    <div class="amount">7.2M FCFA</div>
+                    <div class="change positive">+18%</div>
+                </div>
+                <div class="profit-card">
+                    <h3>Anacarde</h3>
+                    <div class="amount">3.8M FCFA</div>
+                    <div class="change positive">+12%</div>
+                </div>
+                <div class="profit-card">
+                    <h3>Palmier</h3>
+                    <div class="amount">1.5M FCFA</div>
+                    <div class="change positive">+8%</div>
+                </div>
+            </div>
+
+            <div class="charts-section">
+                <div class="chart-container">
+                    <h3>Évolution des bénéfices</h3>
+                    <div class="chart">
+                        <canvas id="profitEvolutionChart" width="400" height="300"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3>Distribution par coopérative</h3>
+                    <div class="chart">
+                        <canvas id="coopDistributionChart" width="400" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION PARAMÈTRES -->
+        <section id="settings-section" class="content-section">
+            <div class="welcome-section">
+                <div class="welcome-text">
+                    <h2>Paramètres du Système</h2>
+                    <p>Configurez votre système de gestion coopérative</p>
+                </div>
+            </div>
+
+            <div class="settings-grid">
+                <div class="settings-card">
+                    <h3>Paramètres Généraux</h3>
+                    <div class="settings-group">
+                        <label>Nom de l'organisation</label>
+                        <input type="text" class="form-control" value="CoopAgri Pro">
+                    </div>
+                    <div class="settings-group">
+                        <label>Devise par défaut</label>
+                        <select class="form-control">
+                            <option>FCFA</option>
+                            <option>Euro</option>
+                            <option>Dollar US</option>
+                        </select>
+                    </div>
+                    <div class="settings-group">
+                        <label>Langue</label>
+                        <select class="form-control">
+                            <option>Français</option>
+                            <option>Anglais</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary"
+                        onclick="showNotification('Paramètres', 'Paramètres généraux sauvegardés', 'success')">
+                        <i class="fas fa-save"></i>
+                        Sauvegarder
+                    </button>
+                </div>
+
+                <div class="settings-card">
+                    <h3>Notifications</h3>
+                    <div class="settings-group">
+                        <label>
+                            <input type="checkbox" checked>
+                            Notifications par email
+                        </label>
+                    </div>
+                    <div class="settings-group">
+                        <label>
+                            <input type="checkbox" checked>
+                            Notifications de récoltes
+                        </label>
+                    </div>
+                    <div class="settings-group">
+                        <label>
+                            <input type="checkbox" checked>
+                            Notifications de paiements
+                        </label>
+                    </div>
+                    <div class="settings-group">
+                        <label>
+                            <input type="checkbox">
+                            Notifications quotidiennes
+                        </label>
+                    </div>
+                    <button class="btn btn-primary"
+                        onclick="showNotification('Notifications', 'Préférences de notifications sauvegardées', 'success')">
+                        <i class="fas fa-save"></i>
+                        Sauvegarder
+                    </button>
+                </div>
+
+                <div class="settings-card">
+                    <h3>Sécurité</h3>
+                    <div class="settings-group">
+                        <label>Changer le mot de passe</label>
+                        <input type="password" class="form-control" placeholder="Nouveau mot de passe">
+                    </div>
+                    <div class="settings-group">
+                        <label>Confirmer le mot de passe</label>
+                        <input type="password" class="form-control" placeholder="Confirmer le mot de passe">
+                    </div>
+                    <div class="settings-group">
+                        <label>
+                            <input type="checkbox" checked>
+                            Authentification à deux facteurs
+                        </label>
+                    </div>
+                    <button class="btn btn-primary"
+                        onclick="showNotification('Sécurité', 'Paramètres de sécurité mis à jour', 'success')">
+                        <i class="fas fa-save"></i>
+                        Mettre à jour
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-seedling"></i>
+                    <span>CoopAgri Pro</span>
+                </div>
+                <p class="footer-description">
+                    Plateforme de gestion pour coopératives agricoles.
+                    Optimisez vos récoltes, gérez vos membres et maximisez vos bénéfices.
+                </p>
+                <div class="footer-links">
+                    <a href="#" onclick="switchSection('dashboard')"><i class="fas fa-tachometer-alt"></i> Tableau de
+                        bord</a>
+                    <a href="#" onclick="switchSection('members')"><i class="fas fa-users"></i> Membres</a>
+                    <a href="#" onclick="switchSection('harvests')"><i class="fas fa-box"></i> Récoltes</a>
+                    <a href="#" onclick="switchSection('profits')"><i class="fas fa-chart-pie"></i> Bénéfices</a>
+                    <a href="#" onclick="switchSection('settings')"><i class="fas fa-cog"></i> Paramètres</a>
+                </div>
+                <div class="copyright">
+                    &copy; 2025 CoopAgri Pro. Tous droits réservés.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODALES -->
+    <div id="harvest-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-plus-circle"></i> Ajouter une récolte</h3>
+                <button class="close-modal" onclick="closeModal('harvest-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Coopérative</label>
+                    <div class="select-cooperative">
+                        <div class="coop-option cacao selected" onclick="selectCoopOption(this, 'cacao')">
+                            <i class="fas fa-seedling"></i>
+                            <span>Cacao</span>
+                        </div>
+                        <div class="coop-option anacarde" onclick="selectCoopOption(this, 'anacarde')">
+                            <i class="fas fa-apple-alt"></i>
+                            <span>Anacarde</span>
+                        </div>
+                        <div class="coop-option palmier" onclick="selectCoopOption(this, 'palmier')">
+                            <i class="fas fa-tree"></i>
+                            <span>Palmier</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="harvest-date">Date de récolte</label>
+                    <input type="date" id="harvest-date" class="form-control" value="">
+                </div>
+                <div class="form-group">
+                    <label for="harvest-quantity">Quantité</label>
+                    <input type="number" id="harvest-quantity" class="form-control" placeholder="Entrez la quantité"
+                        min="0" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label for="harvest-quality">Qualité</label>
+                    <select id="harvest-quality" class="form-control">
+                        <option value="excellent">Excellente</option>
+                        <option value="good">Bonne</option>
+                        <option value="average">Moyenne</option>
+                        <option value="poor">Mauvaise</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="harvest-member">Membre responsable</label>
+                    <select id="harvest-member" class="form-control">
+                        <option value="Emmanuel Ezoua">Emmanuel Ezoua</option>
+                        <option value="Konan Bella">Konan Bella</option>
+                        <option value="N'dori Xavier">N'dori Xavier</option>
+                        <option value="Sophie Traoré">Sophie Traoré</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="harvest-notes">Notes</label>
+                    <textarea id="harvest-notes" class="form-control" rows="3"
+                        placeholder="Notes supplémentaires..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('harvest-modal')">Annuler</button>
+                <button class="btn btn-primary" onclick="saveHarvest()">
+                    <i class="fas fa-save"></i>
+                    Enregistrer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="member-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> Ajouter un membre</h3>
+                <button class="close-modal" onclick="closeModal('member-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="member-name">Nom complet</label>
+                    <input type="text" id="member-name" class="form-control" placeholder="Entrez le nom complet">
+                </div>
+                <div class="form-group">
+                    <label for="member-phone">Téléphone</label>
+                    <input type="tel" id="member-phone" class="form-control"
+                        placeholder="Entrez le numéro de téléphone">
+                </div>
+                <div class="form-group">
+                    <label for="member-email">Email</label>
+                    <input type="email" id="member-email" class="form-control" placeholder="Entrez l'adresse email">
+                </div>
+                <div class="form-group">
+                    <label>Coopérative(s)</label>
+                    <div class="select-cooperative">
+                        <div class="coop-option cacao" onclick="selectCoopOption(this, 'cacao')">
+                            <i class="fas fa-seedling"></i>
+                            <span>Cacao</span>
+                        </div>
+                        <div class="coop-option anacarde" onclick="selectCoopOption(this, 'anacarde')">
+                            <i class="fas fa-apple-alt"></i>
+                            <span>Anacarde</span>
+                        </div>
+                        <div class="coop-option palmier" onclick="selectCoopOption(this, 'palmier')">
+                            <i class="fas fa-tree"></i>
+                            <span>Palmier</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="member-join-date">Date d'adhésion</label>
+                    <input type="date" id="member-join-date" class="form-control" value="">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('member-modal')">Annuler</button>
+                <button class="btn btn-primary" onclick="saveMember()">
+                    <i class="fas fa-save"></i>
+                    Enregistrer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="payment-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-hand-holding-usd"></i> Enregistrer un paiement</h3>
+                <button class="close-modal" onclick="closeModal('payment-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="payment-member">Membre</label>
+                    <select id="payment-member" class="form-control">
+                        <option value="">Sélectionnez un membre</option>
+                        <option value="Emmanuel Ezoua">Emmanuel Ezoua</option>
+                        <option value="Konan Bella">Konan Bella</option>
+                        <option value="N'dori Xavier">N'dori Xavier</option>
+                        <option value="Sophie Traoré">Sophie Traoré</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="payment-amount">Montant (FCFA)</label>
+                    <input type="number" id="payment-amount" class="form-control" placeholder="Entrez le montant"
+                        min="0">
+                </div>
+                <div class="form-group">
+                    <label for="payment-type">Type de paiement</label>
+                    <select id="payment-type" class="form-control">
+                        <option value="cotisation">Cotisation</option>
+                        <option value="achat">Achat de produits</option>
+                        <option value="benefice">Distribution de bénéfices</option>
+                        <option value="autre">Autre</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="payment-date">Date</label>
+                    <input type="date" id="payment-date" class="form-control" value="">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('payment-modal')">Annuler</button>
+                <button class="btn btn-primary" onclick="savePayment()">
+                    <i class="fas fa-save"></i>
+                    Enregistrer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="report-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-chart-bar"></i> Générer un rapport</h3>
+                <button class="close-modal" onclick="closeModal('report-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="report-type">Type de rapport</label>
+                    <select id="report-type" class="form-control">
+                        <option value="monthly">Rapport mensuel</option>
+                        <option value="quarterly">Rapport trimestriel</option>
+                        <option value="annual">Rapport annuel</option>
+                        <option value="harvest">Rapport de récoltes</option>
+                        <option value="financial">Rapport financier</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="report-period">Période</label>
+                    <input type="month" id="report-period" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="report-coop">Coopérative</label>
+                    <select id="report-coop" class="form-control">
+                        <option value="all">Toutes les coopératives</option>
+                        <option value="cacao">Coopérative de Cacao</option>
+                        <option value="anacarde">Coopérative d'Anacarde</option>
+                        <option value="palmier">Coopérative de Palmier</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Format du rapport</label>
+                    <div class="select-cooperative">
+                        <div class="coop-option selected" onclick="selectFormat(this, 'pdf')">
+                            <i class="fas fa-file-pdf"></i>
+                            <span>PDF</span>
+                        </div>
+                        <div class="coop-option" onclick="selectFormat(this, 'excel')">
+                            <i class="fas fa-file-excel"></i>
+                            <span>Excel</span>
+                        </div>
+                        <div class="coop-option" onclick="selectFormat(this, 'print')">
+                            <i class="fas fa-print"></i>
+                            <span>Impression</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('report-modal')">Annuler</button>
+                <button class="btn btn-primary" onclick="generateReport()">
+                    <i class="fas fa-download"></i>
+                    Générer le rapport
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="meeting-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-calendar-check"></i> Planifier une réunion</h3>
+                <button class="close-modal" onclick="closeModal('meeting-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="meeting-title">Titre de la réunion</label>
+                    <input type="text" id="meeting-title" class="form-control" placeholder="Ex: Réunion trimestrielle">
+                </div>
+                <div class="form-group">
+                    <label for="meeting-date">Date et heure</label>
+                    <input type="datetime-local" id="meeting-date" class="form-control" value="">
+                </div>
+                <div class="form-group">
+                    <label for="meeting-location">Lieu</label>
+                    <input type="text" id="meeting-location" class="form-control"
+                        placeholder="Ex: Siège de la coopérative">
+                </div>
+                <div class="form-group">
+                    <label for="meeting-agenda">Ordre du jour</label>
+                    <textarea id="meeting-agenda" class="form-control" rows="4"
+                        placeholder="Points à aborder..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('meeting-modal')">Annuler</button>
+                <button class="btn btn-primary" onclick="saveMeeting()">
+                    <i class="fas fa-calendar-plus"></i>
+                    Planifier
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="profit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-share-alt"></i> Distribuer les bénéfices</h3>
+                <button class="close-modal" onclick="closeModal('profit-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="profit-period">Période de bénéfices</label>
+                    <select id="profit-period" class="form-control">
+                        <option value="q1">Premier trimestre (Jan-Mar)</option>
+                        <option value="q2">Deuxième trimestre (Avr-Juin)</option>
+                        <option value="q3">Troisième trimestre (Juil-Sept)</option>
+                        <option value="q4">Quatrième trimestre (Oct-Déc)</option>
+                        <option value="annual">Annuel</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="profit-total">Montant total à distribuer (FCFA)</label>
+                    <input type="number" id="profit-total" class="form-control" placeholder="Entrez le montant total"
+                        min="0" value="4250000">
+                </div>
+                <div class="form-group">
+                    <label for="profit-coop">Coopérative</label>
+                    <select id="profit-coop" class="form-control">
+                        <option value="all">Toutes les coopératives</option>
+                        <option value="cacao">Coopérative de Cacao</option>
+                        <option value="anacarde">Coopérative d'Anacarde</option>
+                        <option value="palmier">Coopérative de Palmier</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Méthode de distribution</label>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px;">
+                            <input type="radio" name="distribution-method" value="equal" checked>
+                            Égalitaire (même montant pour tous)
+                        </label>
+                        <label style="display: block; margin-bottom: 5px;">
+                            <input type="radio" name="distribution-method" value="proportional">
+                            Proportionnelle (selon la contribution)
+                        </label>
+                        <label style="display: block;">
+                            <input type="radio" name="distribution-method" value="custom">
+                            Personnalisée
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('profit-modal')">Annuler</button>
+                <button class="btn btn-primary" onclick="distributeProfits()">
+                    <i class="fas fa-share-alt"></i>
+                    Distribuer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION -->
+    <div id="notification" class="notification">
+        <i class="fas fa-check-circle"></i>
+        <div class="notification-content">
+            <h4 id="notification-title">Action réussie</h4>
+            <p id="notification-text">L'opération a été effectuée avec succès</p>
+        </div>
+        <button class="close-modal" onclick="closeNotification()">&times;</button>
+    </div>
+
+    <!-- SCRIPT PRINCIPAL -->
+    <script>
+        // ===== DONNÉES DE L'APPLICATION =====
+        const appData = {
+            currentSection: 'dashboard',
+            currentCooperative: 'cacao',
+            membersCount: 147,
+            harvestData: {
+                cacao: 12450,
+                anacarde: 8720,
+                palmier: 5340
+            },
+            revenue: 4250000,
+            members: [
+                {
+                    id: 1,
+                    name: "Emmanuel Ezoua",
+                    phone: "+225 01 23 45 67 89",
+                    email: "emmanuel.ezoua@coopagri.ci",
+                    cooperatives: ['cacao', 'anacarde'],
+                    joinDate: '2023-01-15',
+                    harvests: 45,
+                    revenue: 1250000
+                },
+                {
+                    id: 2,
+                    name: "Konan Bella",
+                    phone: "+225 07 89 12 34 56",
+                    email: "konan.bella@coopagri.ci",
+                    cooperatives: ['cacao'],
+                    joinDate: '2023-02-20',
+                    harvests: 38,
+                    revenue: 980000
+                },
+                {
+                    id: 3,
+                    name: "N'dori Xavier",
+                    phone: "+225 05 67 89 12 34",
+                    email: "ndori.xavier@coopagri.ci",
+                    cooperatives: ['anacarde', 'palmier'],
+                    joinDate: '2023-03-10',
+                    harvests: 52,
+                    revenue: 1560000
+                },
+                {
+                    id: 4,
+                    name: "Sophie Traoré",
+                    phone: "+225 03 45 67 89 12",
+                    email: "sophie.traore@coopagri.ci",
+                    cooperatives: ['palmier'],
+                    joinDate: '2023-04-05',
+                    harvests: 31,
+                    revenue: 850000
+                }
+            ],
+            harvests: [
+                {
+                    id: 1,
+                    date: '2025-01-15',
+                    cooperative: 'cacao',
+                    product: 'Cacao',
+                    quantity: '250 kg',
+                    member: 'Emmanuel Ezoua',
+                    quality: 'Excellente'
+                },
+                {
+                    id: 2,
+                    date: '2025-01-14',
+                    cooperative: 'anacarde',
+                    product: 'Anacarde',
+                    quantity: '180 kg',
+                    member: 'N\'dori Xavier',
+                    quality: 'Bonne'
+                },
+                {
+                    id: 3,
+                    date: '2025-01-13',
+                    cooperative: 'palmier',
+                    product: 'Huile de palme',
+                    quantity: '120 L',
+                    member: 'Sophie Traoré',
+                    quality: 'Excellente'
+                },
+                {
+                    id: 4,
+                    date: '2025-01-12',
+                    cooperative: 'cacao',
+                    product: 'Cacao',
+                    quantity: '310 kg',
+                    member: 'Konan Bella',
+                    quality: 'Moyenne'
+                }
+            ],
+            activities: [
+                {
+                    id: 1,
+                    icon: 'seedling',
+                    title: 'Nouvelle récolte enregistrée',
+                    description: 'Emmanuel Ezoua a enregistré 250 kg de cacao de qualité excellente',
+                    time: 'Il y a 2 heures',
+                    type: 'harvest',
+                    cooperative: 'cacao'
+                },
+                {
+                    id: 2,
+                    icon: 'user-plus',
+                    title: 'Nouveau membre ajouté',
+                    description: 'Marie Akissi a rejoint la coopérative de cacao',
+                    time: 'Il y a 1 jour',
+                    type: 'member',
+                    cooperative: 'cacao'
+                },
+                {
+                    id: 3,
+                    icon: 'money-bill-wave',
+                    title: 'Paiement distribué',
+                    description: 'Distribution des bénéfices du trimestre aux 147 membres',
+                    time: 'Il y a 3 jours',
+                    type: 'payment',
+                    cooperative: 'all'
+                },
+                {
+                    id: 4,
+                    icon: 'shipping-fast',
+                    title: 'Livraison effectuée',
+                    description: '2 tonnes de cacao expédiées vers l\'acheteur principal',
+                    time: 'Il y a 5 jours',
+                    type: 'shipment',
+                    cooperative: 'cacao'
+                },
+                {
+                    id: 5,
+                    icon: 'chart-line',
+                    title: 'Rapport mensuel généré',
+                    description: 'Rapport de performance du mois de janvier disponible',
+                    time: 'Il y a 1 semaine',
+                    type: 'report',
+                    cooperative: 'all'
+                }
+            ],
+            charts: {
+                harvestChart: null,
+                profitChart: null,
+                profitEvolutionChart: null,
+                coopDistributionChart: null
+            }
+        };
+
+        // ===== INITIALISATION =====
+        document.addEventListener('DOMContentLoaded', function () {
+            initApp();
+            setupEventListeners();
+        });
+
+        function initApp() {
+            updateCurrentDate();
+            updateStats();
+            loadActivities();
+            loadMembers();
+            loadHarvests();
+            setupCharts();
+            setupModals();
+
+            // Animation initiale
+            setTimeout(() => {
+                showNotification('Bienvenue !', 'CoopAgri Pro est prêt à l\'emploi', 'success');
+            }, 1000);
+        }
+
+        // ===== GESTION DE L'INTERFACE =====
+        function switchSection(sectionId) {
+            // Mettre à jour la navigation
+            document.querySelectorAll('.main-nav a').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`.main-nav a[onclick*="${sectionId}"]`).classList.add('active');
+
+            // Mettre à jour les sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(`${sectionId}-section`).classList.add('active');
+
+            // Fermer le menu mobile
+            document.getElementById('main-nav').classList.remove('active');
+
+            // Mettre à jour l'état
+            appData.currentSection = sectionId;
+
+            // Notification de changement de section
+            const sectionNames = {
+                'dashboard': 'Tableau de bord',
+                'members': 'Membres',
+                'harvests': 'Récoltes',
+                'profits': 'Bénéfices',
+                'settings': 'Paramètres'
+            };
+
+            showNotification('Navigation', `Section ${sectionNames[sectionId]} chargée`, 'info');
+
+            // Redessiner les graphiques si nécessaire
+            if (sectionId === 'dashboard' || sectionId === 'profits') {
+                setTimeout(() => {
+                    if (sectionId === 'dashboard') {
+                        if (appData.charts.harvestChart) appData.charts.harvestChart.resize();
+                        if (appData.charts.profitChart) appData.charts.profitChart.resize();
+                    } else if (sectionId === 'profits') {
+                        if (appData.charts.profitEvolutionChart) appData.charts.profitEvolutionChart.resize();
+                        if (appData.charts.coopDistributionChart) appData.charts.coopDistributionChart.resize();
+                    }
+                }, 100);
+            }
+        }
+
+        // ===== GESTION DES COOPÉRATIVES =====
+        function selectCooperative(coopType) {
+            appData.currentCooperative = coopType;
+
+            // Mettre à jour les boutons
+            document.querySelectorAll('.coop-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.coop-btn.${coopType}`).classList.add('active');
+
+            // Mettre à jour les statistiques
+            updateStats();
+
+            // Filtrer les activités
+            filterActivitiesByCooperative(coopType);
+
+            showNotification('Coopérative', `Coopérative ${getCoopName(coopType)} sélectionnée`, 'info');
+        }
+
+        function getCoopName(coopType) {
+            const names = {
+                'cacao': 'de Cacao',
+                'anacarde': 'd\'Anacarde',
+                'palmier': 'de Palmier'
+            };
+            return names[coopType] || '';
+        }
+
+        // ===== STATISTIQUES =====
+        function updateStats() {
+            const coop = appData.currentCooperative;
+            const statsData = {
+                'cacao': { cacao: '15,620', anacarde: '2,340', palmier: '1,150', members: '89', revenue: '5.12M' },
+                'anacarde': { cacao: '3,450', anacarde: '10,870', palmier: '2,210', members: '112', revenue: '3.85M' },
+                'palmier': { cacao: '1,980', anacarde: '3,210', palmier: '8,560', members: '76', revenue: '2.98M' }
+            };
+
+            const data = statsData[coop];
+
+            animateValue('cacao-harvest', data.cacao);
+            animateValue('anacarde-harvest', data.anacarde);
+            animateValue('palmier-harvest', data.palmier);
+            animateValue('members-count', data.members);
+            animateValue('revenue-amount', data.revenue + ' FCFA');
+        }
+
+        function animateValue(elementId, finalValue) {
+            const element = document.getElementById(elementId);
+            element.textContent = finalValue;
+
+            // Animation
+            element.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                element.style.transition = 'transform 0.3s ease';
+                element.style.transform = 'scale(1)';
+            }, 300);
+        }
+
+        // ===== ACTIVITÉS =====
+        function loadActivities() {
+            const container = document.getElementById('activity-list');
+            container.innerHTML = '';
+
+            appData.activities.forEach(activity => {
+                const activityItem = document.createElement('div');
+                activityItem.className = 'activity-item';
+                activityItem.innerHTML = `
+                    <div class="activity-icon">
+                        <i class="fas fa-${activity.icon}"></i>
+                    </div>
+                    <div class="activity-content">
+                        <h4>${activity.title}</h4>
+                        <p>${activity.description}</p>
+                    </div>
+                    <div class="activity-time">${activity.time}</div>
+                `;
+                container.appendChild(activityItem);
+            });
+        }
+
+        function addActivity(activity) {
+            activity.id = Date.now();
+            appData.activities.unshift(activity);
+
+            if (appData.activities.length > 10) {
+                appData.activities.pop();
+            }
+
+            loadActivities();
+        }
+
+        function filterActivities(searchTerm) {
+            const items = document.querySelectorAll('.activity-item');
+            const term = searchTerm.toLowerCase();
+
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(term) ? 'flex' : 'none';
+            });
+        }
+
+        function filterActivitiesByCooperative(coop) {
+            const items = document.querySelectorAll('.activity-item');
+
+            if (coop === 'all') {
+                items.forEach(item => item.style.display = 'flex');
+            } else {
+                // Pour la démo, on affiche tout
+                items.forEach(item => item.style.display = 'flex');
+            }
+        }
+
+        // ===== MEMBRES =====
+        function loadMembers() {
+            const container = document.getElementById('members-grid');
+            container.innerHTML = '';
+
+            appData.members.forEach(member => {
+                const memberCard = document.createElement('div');
+                memberCard.className = 'member-card';
+
+                const coopTags = member.cooperatives.map(coop =>
+                    `<span class="coop-tag ${coop}">${getCoopName(coop)}</span>`
+                ).join('');
+
+                memberCard.innerHTML = `
+                    <div class="member-header">
+                        <div class="member-avatar">${member.name.split(' ').map(n => n[0]).join('')}</div>
+                        <div class="member-info">
+                            <h4>${member.name}</h4>
+                            <p><i class="fas fa-phone"></i> ${member.phone}</p>
+                            <p><i class="fas fa-envelope"></i> ${member.email}</p>
+                        </div>
+                    </div>
+                    <div class="member-coops">
+                        ${coopTags}
+                    </div>
+                    <div class="member-stats">
+                        <div class="member-stat">
+                            <div class="value">${member.harvests}</div>
+                            <div class="label">Récoltes</div>
+                        </div>
+                        <div class="member-stat">
+                            <div class="value">${(member.revenue / 1000000).toFixed(2)}M</div>
+                            <div class="label">Revenus</div>
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(memberCard);
+            });
+        }
+
+        // ===== RÉCOLTES =====
+        function loadHarvests() {
+            const tbody = document.querySelector('#harvest-table tbody');
+            tbody.innerHTML = '';
+
+            appData.harvests.forEach(harvest => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${formatDate(harvest.date)}</td>
+                    <td><span class="harvest-coop ${harvest.cooperative}">${getCoopName(harvest.cooperative)}</span></td>
+                    <td>${harvest.product}</td>
+                    <td><strong>${harvest.quantity}</strong></td>
+                    <td>${harvest.member}</td>
+                    <td><span class="${getQualityClass(harvest.quality)}">${harvest.quality}</span></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function getQualityClass(quality) {
+            const classes = {
+                'Excellente': 'badge success',
+                'Bonne': 'badge warning',
+                'Moyenne': 'badge warning',
+                'Mauvaise': 'badge danger'
+            };
+            return classes[quality] || '';
+        }
+
+        // ===== GRAPHIQUES =====
+        function setupCharts() {
+            // Détruire les anciens graphiques s'ils existent
+            if (appData.charts.harvestChart) appData.charts.harvestChart.destroy();
+            if (appData.charts.profitChart) appData.charts.profitChart.destroy();
+            if (appData.charts.profitEvolutionChart) appData.charts.profitEvolutionChart.destroy();
+            if (appData.charts.coopDistributionChart) appData.charts.coopDistributionChart.destroy();
+
+            // Attendre que le DOM soit prêt
+            setTimeout(() => {
+                // Graphique des récoltes
+                const harvestCanvas = document.getElementById('harvestChart');
+                if (harvestCanvas) {
+                    const harvestCtx = harvestCanvas.getContext('2d');
+                    appData.charts.harvestChart = new Chart(harvestCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
+                            datasets: [{
+                                label: 'Cacao (kg)',
+                                data: [1200, 1900, 3000, 5000, 2000, 3000],
+                                backgroundColor: 'rgba(139, 69, 19, 0.7)',
+                                borderColor: 'rgba(139, 69, 19, 1)',
+                                borderWidth: 1
+                            }, {
+                                label: 'Anacarde (kg)',
+                                data: [800, 1200, 1500, 2000, 1800, 2200],
+                                backgroundColor: 'rgba(255, 152, 0, 0.7)',
+                                borderColor: 'rgba(255, 152, 0, 1)',
+                                borderWidth: 1
+                            }, {
+                                label: 'Palmier (L)',
+                                data: [500, 800, 1200, 1500, 1000, 1400],
+                                backgroundColor: 'rgba(56, 142, 60, 0.7)',
+                                borderColor: 'rgba(56, 142, 60, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // Graphique des bénéfices (camembert)
+                const profitCanvas = document.getElementById('profitChart');
+                if (profitCanvas) {
+                    const profitCtx = profitCanvas.getContext('2d');
+                    appData.charts.profitChart = new Chart(profitCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Cacao', 'Anacarde', 'Palmier', 'Autres'],
+                            datasets: [{
+                                data: [45, 30, 20, 5],
+                                backgroundColor: [
+                                    'rgba(139, 69, 19, 0.8)',
+                                    'rgba(255, 152, 0, 0.8)',
+                                    'rgba(56, 142, 60, 0.8)',
+                                    'rgba(128, 128, 128, 0.8)'
+                                ],
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'right',
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // Graphique d'évolution des bénéfices
+                const profitEvolutionCanvas = document.getElementById('profitEvolutionChart');
+                if (profitEvolutionCanvas) {
+                    const profitEvolutionCtx = profitEvolutionCanvas.getContext('2d');
+                    appData.charts.profitEvolutionChart = new Chart(profitEvolutionCtx, {
+                        type: 'line',
+                        data: {
+                            labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
+                            datasets: [{
+                                label: 'Bénéfices (millions FCFA)',
+                                data: [3.2, 3.8, 4.5, 5.2, 6.1, 7.2],
+                                borderColor: 'rgba(46, 125, 50, 1)',
+                                backgroundColor: 'rgba(46, 125, 50, 0.1)',
+                                borderWidth: 3,
+                                fill: true,
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // Graphique de distribution
+                const coopDistributionCanvas = document.getElementById('coopDistributionChart');
+                if (coopDistributionCanvas) {
+                    const coopDistributionCtx = coopDistributionCanvas.getContext('2d');
+                    appData.charts.coopDistributionChart = new Chart(coopDistributionCtx, {
+                        type: 'pie',
+                        data: {
+                            labels: ['Cacao', 'Anacarde', 'Palmier'],
+                            datasets: [{
+                                data: [58, 30, 12],
+                                backgroundColor: [
+                                    'rgba(139, 69, 19, 0.8)',
+                                    'rgba(255, 152, 0, 0.8)',
+                                    'rgba(56, 142, 60, 0.8)'
+                                ],
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'right',
+                                }
+                            }
+                        }
+                    });
+                }
+            }, 500);
+        }
+
+        // ===== MODALES =====
+        function setupModals() {
+            // Gestion des fermetures
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    closeAllModals();
+                }
+            });
+
+            // Menu mobile
+            document.getElementById('mobile-menu-btn').addEventListener('click', function () {
+                document.getElementById('main-nav').classList.toggle('active');
+            });
+
+            // Menu utilisateur
+            document.getElementById('user-menu-btn').addEventListener('click', function () {
+                showNotification('Profil', 'Menu utilisateur ouvert', 'info');
+            });
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            // Pré-remplir les dates
+            const today = new Date().toISOString().split('T')[0];
+            document.querySelectorAll('input[type="date"]').forEach(input => {
+                if (!input.value) input.value = today;
+            });
+
+            document.querySelectorAll('input[type="datetime-local"]').forEach(input => {
+                if (!input.value) {
+                    const now = new Date();
+                    now.setHours(now.getHours() + 1);
+                    input.value = now.toISOString().slice(0, 16);
+                }
+            });
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = '';
+
+            // Réinitialiser les formulaires
+            const form = document.querySelector(`#${modalId} form`);
+            if (form) form.reset();
+        }
+
+        function closeAllModals() {
+            document.querySelectorAll('.modal.active').forEach(modal => {
+                modal.classList.remove('active');
+            });
+            document.body.style.overflow = '';
+        }
+
+        // ===== FONCTIONS DES MODALES =====
+        function selectCoopOption(element, coopType) {
+            const container = element.parentElement;
+            container.querySelectorAll('.coop-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            element.classList.add('selected');
+        }
+
+        function selectFormat(element, format) {
+            const container = element.parentElement;
+            container.querySelectorAll('.coop-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            element.classList.add('selected');
+        }
+
+        function saveHarvest() {
+            const coop = document.querySelector('#harvest-modal .coop-option.selected').getAttribute('data-coop');
+            const quantity = document.getElementById('harvest-quantity').value;
+            const member = document.getElementById('harvest-member').value;
+            const quality = document.getElementById('harvest-quality').value;
+
+            if (!quantity || quantity <= 0) {
+                showNotification('Erreur', 'Veuillez entrer une quantité valide', 'error');
+                return;
+            }
+
+            // Ajouter la récolte
+            const newHarvest = {
+                id: appData.harvests.length + 1,
+                date: document.getElementById('harvest-date').value || new Date().toISOString().split('T')[0],
+                cooperative: coop,
+                product: coop === 'cacao' ? 'Cacao' : coop === 'anacarde' ? 'Anacarde' : 'Huile de palme',
+                quantity: `${quantity} ${coop === 'palmier' ? 'L' : 'kg'}`,
+                member: member,
+                quality: quality
+            };
+
+            appData.harvests.unshift(newHarvest);
+            loadHarvests();
+
+            // Ajouter une activité
+            addActivity({
+                icon: 'seedling',
+                title: 'Nouvelle récolte enregistrée',
+                description: `${member} a enregistré ${quantity} ${coop === 'palmier' ? 'L' : 'kg'} de ${coop === 'cacao' ? 'cacao' : coop === 'anacarde' ? 'anacarde' : 'huile de palme'}`,
+                time: 'À l\'instant',
+                type: 'harvest',
+                cooperative: coop
+            });
+
+            // Mettre à jour les statistiques
+            appData.harvestData[coop] += parseFloat(quantity);
+            updateStats();
+
+            // Mettre à jour le graphique des récoltes
+            if (appData.charts.harvestChart) {
+                // Simuler une mise à jour des données
+                const datasetIndex = coop === 'cacao' ? 0 : coop === 'anacarde' ? 1 : 2;
+                const currentData = appData.charts.harvestChart.data.datasets[datasetIndex].data;
+                const lastValue = currentData[currentData.length - 1];
+                currentData[currentData.length - 1] = lastValue + parseFloat(quantity) / 100;
+                appData.charts.harvestChart.update();
+            }
+
+            showNotification('Récolte', 'Récolte enregistrée avec succès', 'success');
+            closeModal('harvest-modal');
+        }
+
+        function saveMember() {
+            const name = document.getElementById('member-name').value;
+            const phone = document.getElementById('member-phone').value;
+            const email = document.getElementById('member-email').value;
+
+            if (!name || !phone) {
+                showNotification('Erreur', 'Veuillez remplir tous les champs obligatoires', 'error');
+                return;
+            }
+
+            // Récupérer les coopératives sélectionnées
+            const selectedCoops = [];
+            document.querySelectorAll('#member-modal .coop-option.selected').forEach(coop => {
+                selectedCoops.push(coop.getAttribute('data-coop'));
+            });
+
+            // Ajouter le membre
+            const newMember = {
+                id: appData.members.length + 1,
+                name: name,
+                phone: phone,
+                email: email || 'non-spécifié',
+                cooperatives: selectedCoops.length > 0 ? selectedCoops : ['cacao'],
+                joinDate: document.getElementById('member-join-date').value || new Date().toISOString().split('T')[0],
+                harvests: Math.floor(Math.random() * 50) + 10,
+                revenue: Math.floor(Math.random() * 2000000) + 500000
+            };
+
+            appData.members.push(newMember);
+            loadMembers();
+
+            // Mettre à jour le compteur
+            appData.membersCount++;
+            document.getElementById('members-count').textContent = appData.membersCount;
+
+            // Ajouter une activité
+            addActivity({
+                icon: 'user-plus',
+                title: 'Nouveau membre ajouté',
+                description: `${name} a rejoint la coopérative`,
+                time: 'À l\'instant',
+                type: 'member',
+                cooperative: selectedCoops[0] || 'cacao'
+            });
+
+            showNotification('Membre', `${name} ajouté avec succès`, 'success');
+            closeModal('member-modal');
+        }
+
+        function savePayment() {
+            const member = document.getElementById('payment-member').value;
+            const amount = document.getElementById('payment-amount').value;
+            const type = document.getElementById('payment-type').value;
+
+            if (!member || !amount || amount <= 0) {
+                showNotification('Erreur', 'Veuillez remplir tous les champs obligatoires', 'error');
+                return;
+            }
+
+            const typeNames = {
+                'cotisation': 'Cotisation',
+                'achat': 'Achat de produits',
+                'benefice': 'Distribution de bénéfices',
+                'autre': 'Paiement'
+            };
+
+            addActivity({
+                icon: 'hand-holding-usd',
+                title: 'Paiement enregistré',
+                description: `${typeNames[type]} de ${parseInt(amount).toLocaleString()} FCFA pour ${member}`,
+                time: 'À l\'instant',
+                type: 'payment',
+                cooperative: 'all'
+            });
+
+            showNotification('Paiement', `Paiement de ${amount} FCFA enregistré`, 'success');
+            closeModal('payment-modal');
+        }
+
+        function generateReport() {
+            const type = document.getElementById('report-type').value;
+            const coop = document.getElementById('report-coop').value;
+
+            const typeNames = {
+                'monthly': 'mensuel',
+                'quarterly': 'trimestriel',
+                'annual': 'annuel',
+                'harvest': 'de récoltes',
+                'financial': 'financier'
+            };
+
+            const coopNames = {
+                'all': 'toutes les coopératives',
+                'cacao': 'de cacao',
+                'anacarde': 'd\'anacarde',
+                'palmier': 'de palmier'
+            };
+
+            addActivity({
+                icon: 'chart-bar',
+                title: 'Rapport généré',
+                description: `Rapport ${typeNames[type]} pour la coopérative ${coopNames[coop]}`,
+                time: 'À l\'instant',
+                type: 'report',
+                cooperative: 'all'
+            });
+
+            showNotification('Rapport', `Rapport ${typeNames[type]} généré avec succès`, 'success');
+            closeModal('report-modal');
+        }
+
+        function saveMeeting() {
+            const title = document.getElementById('meeting-title').value;
+            const date = document.getElementById('meeting-date').value;
+            const location = document.getElementById('meeting-location').value;
+
+            if (!title || !date || !location) {
+                showNotification('Erreur', 'Veuillez remplir tous les champs obligatoires', 'error');
+                return;
+            }
+
+            addActivity({
+                icon: 'calendar-check',
+                title: 'Réunion planifiée',
+                description: `${title} prévue le ${formatDateTime(date)} à ${location}`,
+                time: 'À l\'instant',
+                type: 'meeting',
+                cooperative: 'all'
+            });
+
+            showNotification('Réunion', `"${title}" planifiée avec succès`, 'success');
+            closeModal('meeting-modal');
+        }
+
+        function distributeProfits() {
+            const total = document.getElementById('profit-total').value;
+            const coop = document.getElementById('profit-coop').value;
+
+            if (!total || total <= 0) {
+                showNotification('Erreur', 'Veuillez entrer un montant valide', 'error');
+                return;
+            }
+
+            const coopNames = {
+                'all': 'toutes les coopératives',
+                'cacao': 'de cacao',
+                'anacarde': 'd\'anacarde',
+                'palmier': 'de palmier'
+            };
+
+            addActivity({
+                icon: 'share-alt',
+                title: 'Bénéfices distribués',
+                description: `Distribution de ${parseInt(total).toLocaleString()} FCFA aux membres de la coopérative ${coopNames[coop]}`,
+                time: 'À l\'instant',
+                type: 'profit',
+                cooperative: 'all'
+            });
+
+            // Mettre à jour le graphique des bénéfices
+            if (appData.charts.profitChart && coop !== 'all') {
+                const coopIndex = coop === 'cacao' ? 0 : coop === 'anacarde' ? 1 : 2;
+                const currentValue = appData.charts.profitChart.data.datasets[0].data[coopIndex];
+                appData.charts.profitChart.data.datasets[0].data[coopIndex] = currentValue + 5;
+                appData.charts.profitChart.update();
+            }
+
+            showNotification('Distribution', `Bénéfices distribués avec succès`, 'success');
+            closeModal('profit-modal');
+        }
+
+        // ===== NOTIFICATIONS =====
+        function showNotification(title, message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const notificationTitle = document.getElementById('notification-title');
+            const notificationText = document.getElementById('notification-text');
+
+            // Mettre à jour l'icône
+            const icon = notification.querySelector('i');
+            icon.className = `fas fa-${type === 'success' ? 'check-circle' :
+                type === 'error' ? 'exclamation-circle' :
+                    type === 'warning' ? 'exclamation-triangle' : 'info-circle'}`;
+
+            notificationTitle.textContent = title;
+            notificationText.textContent = message;
+            notification.className = `notification ${type} active`;
+
+            // Fermer automatiquement
+            setTimeout(closeNotification, 5000);
+        }
+
+        function closeNotification() {
+            document.getElementById('notification').classList.remove('active');
+        }
+
+        // ===== UTILITAIRES =====
+        function updateCurrentDate() {
+            const now = new Date();
+            const options = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            document.getElementById('current-date').textContent =
+                now.toLocaleDateString('fr-FR', options);
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('fr-FR');
+        }
+
+        function formatDateTime(datetimeStr) {
+            const date = new Date(datetimeStr);
+            return date.toLocaleString('fr-FR');
+        }
+
+        function setupEventListeners() {
+            // Rafraîchissement automatique des données
+            setInterval(() => {
+                // Simuler des mises à jour
+                if (Math.random() > 0.7) {
+                    appData.harvestData.cacao += Math.floor(Math.random() * 100);
+                    updateStats();
+                }
+            }, 30000);
+
+            // Raccourcis clavier
+            document.addEventListener('keydown', function (e) {
+                // Ctrl + S pour sauvegarder
+                if (e.ctrlKey && e.key === 's') {
+                    e.preventDefault();
+                    showNotification('Sauvegarde', 'Toutes les données ont été sauvegardées', 'success');
+                }
+                // Ctrl + H pour aide
+                if (e.ctrlKey && e.key === 'h') {
+                    e.preventDefault();
+                    showNotification('Aide', 'Menu d\'aide ouvert', 'info');
+                }
+            });
+
+            // Gestion du scroll pour le menu
+            window.addEventListener('scroll', function () {
+                const header = document.querySelector('header');
+                if (window.scrollY > 50) {
+                    header.style.boxShadow = '0 8px 20px rgba(0,0,0,0.2)';
+                } else {
+                    header.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                }
+            });
+
+            // Redimensionner les graphiques quand la fenêtre change de taille
+            window.addEventListener('resize', function () {
+                if (appData.charts.harvestChart) appData.charts.harvestChart.resize();
+                if (appData.charts.profitChart) appData.charts.profitChart.resize();
+                if (appData.charts.profitEvolutionChart) appData.charts.profitEvolutionChart.resize();
+                if (appData.charts.coopDistributionChart) appData.charts.coopDistributionChart.resize();
+            });
+        }
+    </script>
+</body>
+
+</html>
