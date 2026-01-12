@@ -109,7 +109,7 @@ projet/
 ### Méthode 2 : Développement Local
 ```bash
 # Clonez le dépôt
-git clone https://github.com/votre-pseudo/coopagri.git
+git clone https://github.com/eezoua19/coopagri.git
 
 # Accédez au dossier
 cd coopagri
@@ -129,7 +129,7 @@ python -m http.server 8000
 git init
 git add .
 git commit -m "Initial commit - CoopAgri Pro"
-git remote add origin https://github.com/votre-pseudo/coopagri.git
+git remote add origin https://github.com/eezoua19/coopagri.git
 git branch -M main
 git push -u origin main
 ```
@@ -329,9 +329,8 @@ const member = {
 
 Pour toute question, suggestion ou problème :
 
-1. **Issues GitHub** : (https://github.com/eezoua19/coopagri/issues)
-2. **Email** : ezouaemmanuel07@gmail.com
-3. **Documentation** : Consultez ce README et les commentaires du code
+1. **Email** : ezouaemmanuel07@gmail.com
+2. **Documentation** : Consultez ce README et les commentaires du code
 
 ---
 
